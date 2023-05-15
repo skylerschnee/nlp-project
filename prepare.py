@@ -134,3 +134,5 @@ def readme_length(col):
         read_len= len(x)
         length.append(read_len)
     return length
+#  Use this to add to df
+# df['readme_length']= readme_length('readme_contents')
