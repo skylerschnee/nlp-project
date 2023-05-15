@@ -127,7 +127,7 @@ def basic_clean_df(df):
     return df
 
 ########################################################
-def readme_length(col):
+def readme_length(df, col):
     """ This function takes in each README.md file and returns the word count for each file"""
     length = []
     for x in df[col]:
