@@ -81,7 +81,7 @@ def remove_df_stopwords(df):
     return df
 
 def remove_specials(text):
-    regex = re.compile(r"[^a-z0-9'\s]")
+    regex = re.compile(r"[^a-z'\s]")
     return regex.sub('', text)
     
 def remove_specials_df(df):
@@ -105,7 +105,7 @@ def remove_words(text, words):
     return text
 
 def remove_words_df(df):
-    words = ['python', 'py', 'java', 'javascript', 'js']
+    words = ['python', 'py', 'java', 'javascript', 'js', 'script']
     for col in df.columns:
         if df[col].dtype == 'object':
             df[col] = df[col].apply(lambda x: remove_words(x, words))
