@@ -136,3 +136,16 @@ def readme_length(df, col):
     return length
 #  Use this to add to df
 # df['readme_length']= readme_length('readme_contents')
+
+########################################################
+# Split
+def train_val_test(df, stratify=False, target=None):
+    train_validate, test = train_test_split(df,
+                                            random_state=706,
+                                            train_size=0.8,
+                                            stratify=df[target] if stratify else None)
+    train, val = train_test_split(train_validate,
+                                  random_state=706,
+                                  train_size=0.7,
+                                  stratify=train_validate[target] if stratify else None)
+    return train, val, test
