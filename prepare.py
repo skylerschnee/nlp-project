@@ -126,3 +126,11 @@ def basic_clean_df(df):
     df = df.drop(columns = 'repo')
     return df
 
+########################################################
+def readme_length(col):
+    """ This function takes in each README.md file and returns the word count for each file"""
+    length = []
+    for x in df[col]:
+        read_len= len(x)
+        length.append(read_len)
+    return length
