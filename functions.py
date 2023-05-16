@@ -16,7 +16,14 @@ import nltk
 import unicodedata
 
 from wordcloud import WordCloud
-import scipy.stats as stats
+
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
+from sklearn.tree import DecisionTreeClassifier 
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import MultinomialNB
 
 
 
@@ -60,7 +67,7 @@ def get_top_twenty_all_wordgram(all_words):
          ).generate(' '.join(all_words))
     plt.imshow(img)
     plt.axis('off')
-    plt.title('Most common python words')
+    plt.title('Most common words')
     plt.show()
     
     
@@ -73,24 +80,79 @@ def top_twenty_bigrams(java_words, python_words, java_script_words):
         plt.title(f'top 20 bigrams {titles[i]}')
         plt.show()
         
-        
-def get_kruskal_wallis_test(df):
-    '''
-    get_kruskal_wallis_test takes in a pandas dataframe and outputs t-stat
-    and p-value of a Kruskal-Wallis Test.
-    '''
-    python_readme_lengths = df[df.language == 'python']['readme_length']
-    java_readme_lengths = df[df.language == 'java']['readme_length']
-    javascript_readme_lengths= df[df.language == 'javascript']['readme_length']
-    
-    # Perform Kruskal-Wallis test
-    statistic, p_value = stats.kruskal(
-        python_readme_lengths, java_readme_lengths, javascript_readme_lengths)
+def metrics_gala(train, val):
+        results = {}
 
-    # Output the results
-    print("Kruskal-Wallis Test")
-    print(f"Test statistic: {statistic}")
-    print(f"P-value: {p_value}")
+def get_models(train, val, test, t=0):
+    results = {}
+    x_train = train['readme_contents']
+    y_train = train.language
+    
+    x_val = val['readme_contents']
+    y_val = val.language
+
+    x_test = test['readme_contents']
+    y_test = test.language
+    tv = TfidfVectorizer()
+    dt = DecisionTreeClassifier(max_depth=5)
+    rf= RandomForestClassifier(max_depth= 5)
+    knn = KNeighborsClassifier(n_neighbors= 5)
+    
+    baseline_acc = round((train.language == 'python').mean(),2)
+    results['baseline'] = {'train_acc':baseline_acc}
+
+
+    #TfidVectorizer on DT
+    train_tv= tv.fit_transform(x_train)
+    dt.fit(train_tv, y_train)
+    val_tv= tv.transform(x_val)
+    dt_train=round(dt.score(train_tv, y_train),2)
+    dt_val=round(dt.score(val_tv, y_val),2)
+
+    results['DecisionTree']={'train_acc': dt_train,
+                            ' val_acc':dt_val,
+                            'difference': dt_train-dt_val}
+
+    #TfidVectorizer on RF
+    train_tv= tv.fit_transform(x_train)
+    rf.fit(train_tv, y_train)
+    val_tv= tv.transform(x_val)
+    rf_train=round(rf.score(train_tv, y_train),2)
+    rf_val=round(rf.score(val_tv, y_val),2)
+    results['RandomForest']={'train_acc': round(rf.score(train_tv, y_train),2),
+                            ' val_acc':round(rf.score(val_tv, y_val),2),
+                            'difference': rf_train-rf_val}
+
+    #TfidVectorizer on KNN
+    train_tv= tv.fit_transform(x_train)
+    knn.fit(train_tv, y_train)
+    val_tv= tv.transform(x_val)
+    knn_train=round(knn.score(train_tv, y_train),2)
+    knn_val=round(knn.score(val_tv, y_val),2)
+    results['KNearestNeighbor']={'train_acc':knn_train,
+                                ' val_acc':knn_val,
+                                'difference': knn_train-knn_val}
+
+    tfidf = TfidfVectorizer()
+    nb = MultinomialNB()
+    X_bow = tfidf.fit_transform(x_train)
+    nb.fit(X_bow, y_train)
+    nb_train = nb.score(X_bow, y_train)
+    x_val_bow = tfidf.transform(x_val)
+    nb_val = nb.score(x_val_bow, y_val)
+    results['Naive Bayes']={'train_acc': round(nb_train,2),
+                                ' val_acc':round(nb_val,2),
+                                'difference': nb_train-nb_val}
+     
+    if t == 0:
+        return pd.DataFrame(results).T
+
+    else:
+        x_test_bow = tfidf.transform(x_test)
+        nb.score(x_test_bow, y_test)
+        print('Accuracy of Naive_bayes classifier on test set: {:.2f}'
+             .format(nb.score(x_test_bow, y_test)))
     
     
-    
+
+
