@@ -12,6 +12,7 @@ import warnings
 warnings.filterwarnings('ignore')
 import unicodedata
 import nltk
+from sklearn.model_selection import train_test_split
 
 #################################################
 
@@ -124,6 +125,7 @@ def basic_clean_df(df):
     df = normalize_df(df)
     df = remove_specials_df(df)
     df = df.drop(columns = 'repo')
+    df['readme_length'] = readme_length(df, 'readme_contents')
     return df
 
 ########################################################

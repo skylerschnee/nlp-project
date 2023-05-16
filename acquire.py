@@ -14,6 +14,8 @@ import os
 import json
 from typing import Dict, List, Optional, Union, cast
 import requests
+import pandas as pd
+import numpy as np
 
 from env import github_token, github_username
 
@@ -262,3 +264,8 @@ def scrape_github_data() -> List[Dict[str, str]]:
 if __name__ == "__main__":
     data = scrape_github_data()
     json.dump(data, open("data.json", "w"), indent=1)
+
+    
+def get_dataFrame():
+    df = pd.read_json('data.json')
+    return df
