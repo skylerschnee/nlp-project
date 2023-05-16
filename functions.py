@@ -14,6 +14,7 @@ from prepare import basic_clean_df, readme_length
 
 import nltk
 import unicodedata
+from scipy.stats import stats
 
 from wordcloud import WordCloud
 
@@ -94,9 +95,9 @@ def get_models(train, val, test, t=0):
     x_test = test['readme_contents']
     y_test = test.language
     tv = TfidfVectorizer()
-    dt = DecisionTreeClassifier(max_depth=5)
-    rf= RandomForestClassifier(max_depth= 5)
-    knn = KNeighborsClassifier(n_neighbors= 5)
+    dt = DecisionTreeClassifier(max_depth=10)
+    rf= RandomForestClassifier(max_depth= 10)
+    knn = KNeighborsClassifier(n_neighbors= 8)
     
     baseline_acc = round((train.language == 'python').mean(),2)
     results['baseline'] = {'train_acc':baseline_acc}
@@ -149,10 +150,57 @@ def get_models(train, val, test, t=0):
 
     else:
         x_test_bow = tfidf.transform(x_test)
-        nb.score(x_test_bow, y_test)
+        knn.score(x_test_bow, y_test)
         print('Accuracy of Naive_bayes classifier on test set: {:.2f}'
-             .format(nb.score(x_test_bow, y_test)))
+             .format(knn.score(x_test_bow, y_test)))
     
     
 
+def get_kruskal_wallis_test(df):
+    '''
+    get_kruskal_wallis_test takes in a pandas dataframe and outputs t-stat
+    and p-value of a Kruskal-Wallis Test.
+    '''
+    python_readme_lengths = df[df.language == 'python']['readme_length']
+    java_readme_lengths = df[df.language == 'java']['readme_length']
+    javascript_readme_lengths= df[df.language == 'javascript']['readme_length']
 
+    # Perform Kruskal-Wallis test
+    statistic, p_value = stats.kruskal(
+        python_readme_lengths, java_readme_lengths, javascript_readme_lengths)
+
+    # Output the results
+    print("Kruskal-Wallis Test")
+    print(f"Test statistic: {statistic}")
+    print(f"P-value: {p_value}")
+    
+
+    
+def get_wordgrams(python_words, java_words, java_script_words):
+    # Generate word clouds
+    python_cloud = WordCloud(background_color='white', height=400, width=400).generate(' '.join(python_words))
+    java_cloud = WordCloud(background_color='white', height=400, width=400).generate(' '.join(java_words))
+    javascript_cloud = WordCloud(background_color='white', height=400, width=400).generate(' '.join(java_script_words))
+
+    # Create the figure and axes
+    fig, axs = plt.subplots(1, 3, figsize=(12, 4))
+
+    # Plot the word clouds
+    axs[0].imshow(python_cloud, interpolation='bilinear')
+    axs[1].imshow(java_cloud, interpolation='bilinear')
+    axs[2].imshow(javascript_cloud, interpolation='bilinear')
+
+    # Set titles for the subplots
+    axs[0].set_title('Python', fontsize=14, fontweight='bold')
+    axs[1].set_title('Java', fontsize=14, fontweight='bold')
+    axs[2].set_title('JavaScript', fontsize=14, fontweight='bold')
+
+    # Remove the axis ticks and labels
+    for ax in axs:
+        ax.axis('off')
+
+    # Adjust spacing between subplots
+    plt.subplots_adjust(wspace=0.05)
+
+    # Display the plot
+    plt.show()
