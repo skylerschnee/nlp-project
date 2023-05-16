@@ -72,3 +72,25 @@ def top_twenty_bigrams(java_words, python_words, java_script_words):
         pd.Series(nltk.bigrams(dif_words[i])).value_counts().head(20).plot.barh()
         plt.title(f'top 20 bigrams {titles[i]}')
         plt.show()
+        
+        
+def get_kruskal_wallis_test(df):
+    '''
+    get_kruskal_wallis_test takes in a pandas dataframe and outputs t-stat
+    and p-value of a Kruskal-Wallis Test.
+    '''
+    python_readme_lengths = df[df.language == 'python']['readme_length']
+    java_readme_lengths = df[df.language == 'java']['readme_length']
+    javascript_readme_lengths= df[df.language == 'javascript']['readme_length']
+    
+    # Perform Kruskal-Wallis test
+    statistic, p_value = stats.kruskal(
+        python_readme_lengths, java_readme_lengths, javascript_readme_lengths)
+
+    # Output the results
+    print("Kruskal-Wallis Test")
+    print(f"Test statistic: {statistic}")
+    print(f"P-value: {p_value}")
+    
+    
+    
