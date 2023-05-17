@@ -81,3 +81,9 @@ In conclusion, we are successful in our efforts to out-perform baseline accuracy
 ### Conclusion & Reccomendations
 - To understand the limitations we purposely placed on ourselves in the effort of using alternate methods to increase our model performance, re-review the "giveaway" words we removed from the dataset. Words like "python" and "js" among others proved to be giveaways of the programming language used.
 - To make futher advancements with this project, we would like to scrape more github README content and re-run through this notebook to further solidify or improve our resluts. We would also like to experiment with additional models and parameters.
+
+### Steps to Reproduce
+- create env.py file 
+  - needs username varible with github username 
+  - and github token for api use
+- clone repo and run notebook
