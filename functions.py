@@ -151,7 +151,7 @@ def get_models(train, val, test, t=0):
     else:
         x_test_bow = tfidf.transform(x_test)
         knn.score(x_test_bow, y_test)
-        print('Accuracy of Naive_bayes classifier on test set: {:.2f}'
+        print('Accuracy of KNN classifier on test set: {:.2f}'
              .format(knn.score(x_test_bow, y_test)))
     
     
