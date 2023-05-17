@@ -106,7 +106,7 @@ def remove_words(text, words):
     return text
 
 def remove_words_df(df):
-    words = ['python', 'py', 'java', 'javascript', 'js', 'script']
+    words = ['python', 'py', 'java', 'javascript', 'js', 'script', 'use', 'file', 'new', 'run', 'data', 'using', 'add']
     for col in df.columns:
         if df[col].dtype == 'object':
             df[col] = df[col].apply(lambda x: remove_words(x, words))
