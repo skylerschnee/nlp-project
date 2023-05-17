@@ -97,7 +97,7 @@ def get_models(train, val, test, t=0):
     tv = TfidfVectorizer()
     dt = DecisionTreeClassifier(max_depth=10)
     rf= RandomForestClassifier(max_depth= 10)
-    knn = KNeighborsClassifier(n_neighbors= 8)
+    knn = KNeighborsClassifier(n_neighbors= 8, metric='cosine')
     
     baseline_acc = round((train.language == 'python').mean(),2)
     results['baseline'] = {'train_acc':baseline_acc}
