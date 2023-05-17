@@ -41,23 +41,6 @@ def clean(text):
 
 
 def get_word_freqs(df):
-    '''
-    Calculate word frequencies for different programming languages in the given DataFrame.
-
-    Parameters:
-    df (DataFrame): Input DataFrame containing programming language and README content.
-
-    Returns:
-    tuple: A tuple containing the following:
-        - python_freq (Series): Word frequencies for Python language.
-        - java_freq (Series): Word frequencies for Java language.
-        - java_script_freq (Series): Word frequencies for JavaScript language.
-        - all_freq (Series): Word frequencies for all programming languages combined.
-        - all_words (str): Concatenated clean text of all README contents.
-        - python_words (str): Concatenated clean text of Python README contents.
-        - java_words (str): Concatenated clean text of Java README contents.
-        - java_script_words (str): Concatenated clean text of JavaScript README contents.
-    '''
     python_words = clean(' '.join(df[df.language=='python']['readme_contents']))
     java_words = clean(' '.join(df[df.language=='java']['readme_contents']))
     java_script_words = clean(' '.join(df[df.language=='javascript']['readme_contents']))
@@ -71,18 +54,6 @@ def get_word_freqs(df):
 
 
 def top_twenty_words_vis(python_freq, java_freq, java_script_freq, all_freq):
-    '''
-    Create a horizontal bar plot to visualize the top 20 most frequently used words for each programming language.
-
-    Parameters:
-    python_freq (Series): Word frequencies for Python language.
-    java_freq (Series): Word frequencies for Java language.
-    java_script_freq (Series): Word frequencies for JavaScript language.
-    all_freq (Series): Word frequencies for all programming languages combined.
-
-    Returns:
-    None
-    '''
     word_counts = pd.concat([python_freq,java_freq, java_script_freq, all_freq], axis=1
          ).fillna(0
                  ).astype(int)
@@ -93,9 +64,6 @@ def top_twenty_words_vis(python_freq, java_freq, java_script_freq, all_freq):
     
     
 def get_top_twenty_all_wordgram(all_words):
-    '''
-    returns a wordgram for all words
-    '''
     img = WordCloud(background_color='White',
          ).generate(' '.join(all_words))
     plt.imshow(img)
@@ -106,9 +74,6 @@ def get_top_twenty_all_wordgram(all_words):
     
 
 def top_twenty_bigrams(java_words, python_words, java_script_words):
-    '''
-    returns the top twenty bigram for all of the languages
-    '''
     dif_words = [python_words, java_script_words, java_words]
     titles = ['python', 'js', 'java']
     for i in range(3):
@@ -117,24 +82,9 @@ def top_twenty_bigrams(java_words, python_words, java_script_words):
         plt.show()
         
 def metrics_gala(train, val):
-    '''
-    used to build a dictionary
-    '''
         results = {}
 
 def get_models(train, val, test, t=0):
-    '''
-    Train and evaluate multiple classifiers using different models and vectorization techniques.
-
-    Parameters:
-    train (DataFrame): Training data containing 'readme_contents' and 'language' columns.
-    val (DataFrame): Validation data containing 'readme_contents' and 'language' columns.
-    test (DataFrame): Test data containing 'readme_contents' and 'language' columns.
-    t (int, optional): Flag to determine if test accuracy should be printed. Default is 0.
-
-    Returns:
-    DataFrame: Results of model training and evaluation.
-    '''
     results = {}
     x_train = train['readme_contents']
     y_train = train.language
@@ -147,7 +97,7 @@ def get_models(train, val, test, t=0):
     tv = TfidfVectorizer()
     dt = DecisionTreeClassifier(max_depth=10)
     rf= RandomForestClassifier(max_depth= 10)
-    knn = KNeighborsClassifier(n_neighbors= 8)
+    knn = KNeighborsClassifier(n_neighbors= 8, metric='cosine')
     
     baseline_acc = round((train.language == 'python').mean(),2)
     results['baseline'] = {'train_acc':baseline_acc}
@@ -201,7 +151,7 @@ def get_models(train, val, test, t=0):
     else:
         x_test_bow = tfidf.transform(x_test)
         knn.score(x_test_bow, y_test)
-        print('Accuracy of Naive_bayes classifier on test set: {:.2f}'
+        print('Accuracy of KNN classifier on test set: {:.2f}'
              .format(knn.score(x_test_bow, y_test)))
     
     
@@ -227,10 +177,6 @@ def get_kruskal_wallis_test(df):
 
     
 def get_wordgrams(python_words, java_words, java_script_words):
-    
-    '''
-    returns word cloud for all of the languages
-    '''
     # Generate word clouds
     python_cloud = WordCloud(background_color='white', height=400, width=400).generate(' '.join(python_words))
     java_cloud = WordCloud(background_color='white', height=400, width=400).generate(' '.join(java_words))
@@ -258,5 +204,4 @@ def get_wordgrams(python_words, java_words, java_script_words):
 
     # Display the plot
     plt.show()
-
 
