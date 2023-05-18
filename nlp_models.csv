@@ -1,0 +1,6 @@
+model,train_acc, val_acc,difference
+baseline,0.0,,
+DecisionTree,1.0,0.77,0.22999999999999998
+RandomForest,0.99,0.8,0.18999999999999995
+KNearestNeighbor,0.75,0.63,0.12
+Naive Bayes,0.99,0.74,0.2549159449821701
