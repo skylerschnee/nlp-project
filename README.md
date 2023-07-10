@@ -86,4 +86,4 @@ In conclusion, we are successful in our efforts to out-perform baseline accuracy
 - create env.py file 
   - needs username varible with github username 
   - and github token for api use
-- clone repo and run notebook
+- clone repo and run the notebook
