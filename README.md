@@ -85,5 +85,5 @@ In conclusion, we are successful in our efforts to out-perform baseline accuracy
 ### Steps to Reproduce
 - create env.py file 
   - needs username varible with github username 
-  - and github token for api use
+  - needs github token for api use
 - clone repo and run the notebook
